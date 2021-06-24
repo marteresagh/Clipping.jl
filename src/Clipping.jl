@@ -11,9 +11,6 @@ module Clipping
 	include("clip.jl")
 	include("fileIO.jl")
 	include("addpoint.jl")
-	#
-	# #
-	# include("segment/core.jl")
  	# include("slices/main.jl")
 
 	export Common, FileManager

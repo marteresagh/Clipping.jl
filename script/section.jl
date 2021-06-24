@@ -51,9 +51,6 @@ function main()
 	ucs = args["ucs"]
 	epsg = args["epsg"]
 
-	Clipping.flushprintln("== params ==")
-	Clipping.flushprintln(" ")
-    #Clipping.flushprintln("$arg  =>  $val")
 
 	# read data
 	b = tryparse.(Float64,split(bbin, " "))
@@ -67,6 +64,23 @@ function main()
 	else
 		ucs = FileManager.ucs2matrix(ucs)
 	end
+
+	Clipping.flushprintln("== params ==")
+	Clipping.flushprintln(" Sources => $txtpotreedirs ")
+    Clipping.flushprintln(" Bounding Box => $bbin ")
+	Clipping.flushprintln(" Output => $output ")
+	Clipping.flushprintln(" Point of View => $PO ")
+	if !isnothing(altitude)
+		Clipping.flushprintln(" Altitude => $altitude ")
+		Clipping.flushprintln(" Thickness => $thickness ")
+	end
+	if !isnothing(ucs)
+		Clipping.flushprintln(" User coordinates system => $ucs ")
+	end
+	if !isnothing(epsg)
+		Clipping.flushprintln(" EPSG => $epsg ")
+	end
+	Clipping.flushprintln(" ")
 
 	# init
 	coordsystemmatrix = Clipping.PO2matrix(PO,ucs)

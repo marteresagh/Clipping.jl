@@ -22,6 +22,5 @@ function clip(
 
     flushprintln("Processed $(params.numPointsProcessed) points")
     savepointcloud(params, temp)
-    params.numPointProcessed != 0 ? return true : return false
-    return params.numPointProcessed != 0
+    return params.numPointsProcessed != 0
 end

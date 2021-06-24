@@ -41,13 +41,6 @@ end
 function main()
 	args = parse_commandline()
 
-	Clipping.flushprintln("== params ==")
-	for (arg,val) in args
-		if !isnothing(val)
-			Clipping.flushprintln("$arg  =>  $val")
-		end
-	end
-
 	bbox = args["bbox"]
 	jsonfile = args["jsonfile"]
 	position_ = args["position"]
@@ -57,14 +50,24 @@ function main()
 	txtpotreedirs = args["source"]
 	epsg = args["epsg"]
 
+	Clipping.flushprintln("== params ==")
+	Clipping.flushprintln(" Sources => $txtpotreedirs ")
+	Clipping.flushprintln(" Output => $output ")
+	if !isnothing(epsg)
+		Clipping.flushprintln(" EPSG => $epsg ")
+	end
+	Clipping.flushprintln(" ")
+
 	model = nothing
 
 	if !isnothing(bbox)
 		b = tryparse.(Float64,split(bbox, " "))
 		@assert length(b) == 6 "Required bounding box as 'x_min y_min z_min x_max y_max z_max'"
 		bbox = Clipping.AABB(b[4],b[1],b[5],b[2],b[6],b[3])
+		Clipping.flushprintln(" Bounding Box => $bbox ")
 		model = Clipping.getmodel(bbox)
 	elseif !isnothing(jsonfile)
+		Clipping.flushprintln(" Volume => $jsonfile ")
 		model = Clipping.getmodel(jsonfile)
 	else
 		scale = tryparse.(Float64,split(scale_, " "))
@@ -73,6 +76,11 @@ function main()
 		@assert length(position) == 3 "a 3D vector needed"
 		rotation = tryparse.(Float64,split(rotation_, " "))
 		@assert length(rotation) == 3 "a 3D vector needed"
+
+		Clipping.flushprintln(" Position => $position ")
+		Clipping.flushprintln(" Scale => $scale ")
+		Clipping.flushprintln(" Rotation => $rotation ")
+
 		volume = Clipping.Volume(scale,position,rotation)
 		model = Clipping.getmodel(volume)
 	end
