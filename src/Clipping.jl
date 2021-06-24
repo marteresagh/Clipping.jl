@@ -4,7 +4,6 @@ module Clipping
 	import Common.AABB
 	import Common.getmodel
 	using FileManager
-	using Printf
 
 	# first include struct
 	include("struct.jl")

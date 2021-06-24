@@ -109,3 +109,53 @@ function newPointRecord(point::Point, type::LasIO.DataType, header::LasIO.LasHea
 	end
 
 end
+
+
+
+"""
+	PO2matrix(PO::String, UCS=Matrix{Float64}(Common.I,4,4)::Matrix)
+
+Observation point.
+Valid input:
+ - "XY+": Top view
+ - "XY-": Bottom view
+ - "XZ+": Back view
+ - "XZ-": Front view
+ - "YZ+": Left view
+ - "YZ-": Right view
+"""
+function PO2matrix(PO::String, UCS=Matrix{Float64}(Common.I,4,4)::Matrix)
+    planecode = PO[1:2]
+    @assert planecode == "XY" || planecode == "XZ" || planecode == "YZ" "orthoprojectionimage: $PO not valid view "
+
+    directionview = PO[3]
+    @assert directionview == '+' || directionview == '-' "orthoprojectionimage: $PO not valid view "
+
+    coordsystemmatrix = Matrix{Float64}(Common.I,3,3)
+
+    # if planecode == XY # top, - bottom
+    #     continue
+    if planecode == "XZ" # back, - front
+        coordsystemmatrix[1,1] = -1.
+        coordsystemmatrix[2,2] = 0.
+        coordsystemmatrix[3,3] = 0.
+        coordsystemmatrix[2,3] = 1.
+        coordsystemmatrix[3,2] = 1.
+    elseif planecode == "YZ" # right, - left
+        coordsystemmatrix[1,1] = 0.
+        coordsystemmatrix[2,2] = 0.
+        coordsystemmatrix[3,3] = 0.
+        coordsystemmatrix[1,2] = 1.
+        coordsystemmatrix[2,3] = 1.
+        coordsystemmatrix[3,1] = 1.
+    end
+
+    # if directionview == "+"
+    #     continue
+    if directionview == '-'
+        R = [-1. 0 0; 0 1. 0; 0 0 -1]
+        coordsystemmatrix = R*coordsystemmatrix
+    end
+
+    return coordsystemmatrix*UCS[1:3,1:3]
+end

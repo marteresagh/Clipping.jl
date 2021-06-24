@@ -22,5 +22,6 @@ function clip(
 
     flushprintln("Processed $(params.numPointsProcessed) points")
     savepointcloud(params, temp)
-    FileManager.successful(params.numPointsProcessed != 0, proj_folder::String)
+    params.numPointProcessed != 0 ? return true : return false
+    return params.numPointProcessed != 0
 end

@@ -1,7 +1,7 @@
 println("loading packages... ")
 
 using ArgParse
-using OrthographicProjection
+using Clipping
 
 println("packages OK")
 
@@ -22,7 +22,7 @@ function parse_commandline()
             help = "Projection plane: XY+, XZ+, YZ+"
 			arg_type = String
             default = "XY+"
-		"--quote"
+		"--altitude"
 			help = "Distance of plane from origin"
 			arg_type = Float64
 		"--thickness"
@@ -42,21 +42,20 @@ end
 function main()
     args = parse_commandline()
 
-
-	OrthographicProjection.flushprintln("== params ==")
-    for (arg,val) in args
-        OrthographicProjection.flushprintln("$arg  =>  $val")
-    end
-
 	bbin = args["bbin"]
 	output = args["output"]
 	PO = args["po"]
 	txtpotreedirs = args["source"]
-	q = args["quote"]
+	altitude = args["altitude"]
 	thickness = args["thickness"]
 	ucs = args["ucs"]
 	epsg = args["epsg"]
 
+	Clipping.flushprintln("== params ==")
+	Clipping.flushprintln(" ")
+    #Clipping.flushprintln("$arg  =>  $val")
+
+	# read data
 	b = tryparse.(Float64,split(bbin, " "))
 	if length(b) == 6
 		#bbin = (hcat([b[1],b[2],b[3]]),hcat([b[4],b[5],b[6]]))
@@ -69,19 +68,23 @@ function main()
 		ucs = FileManager.ucs2matrix(ucs)
 	end
 
-
-	coordsystemmatrix = OrthographicProjection.PO2matrix(PO,ucs)
+	# init
+	coordsystemmatrix = Clipping.PO2matrix(PO,ucs)
 	model = Common.getmodel(bbin)
 	aabb = Common.boundingbox(model[1])
 
-	if !isnothing(q) && !isnothing(thickness)
+	if !isnothing(altitude) && !isnothing(thickness)
 		origin = Common.inv(ucs)[1:3,4]
-		model = Common.getmodel(Common.inv(coordsystemmatrix), q, thickness, aabb; new_origin = origin)
+		model = Common.getmodel(Common.inv(coordsystemmatrix), altitude, thickness, aabb; new_origin = origin)
 	end
 
-	seg = OrthographicProjection.segment(txtpotreedirs, output, model; epsg = epsg)
+	# task
+	task = Clipping.clip(txtpotreedirs, output, model, epsg)
+
+	# success
 	proj_folder = splitdir(output)[1]
-	FileManager.successful(seg, proj_folder)
+	FileManager.successful(task, proj_folder)
+
 end
 
 @time main()
