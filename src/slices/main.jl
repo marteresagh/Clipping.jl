@@ -134,7 +134,7 @@ function get_parallel_sections(
 
 	V,EV,FV = model # first plane
 
-	quotas, indices = get_quotas(plane, step, bbin) # quota and indices of each slice
+	quotas, indices = get_altitudes(plane, step, bbin) # quota and indices of each slice
 
 	planes = Common.LAR[]
 	n_sections = length(indices)
@@ -180,7 +180,7 @@ end
 """
 Return quotas and indices of each LAR model thickness plane.
 """
-function get_quotas(plane::Plane, step::Float64,  bbin::Union{AABB,String})
+function get_altitudes(plane::Plane, step::Float64,  bbin::Union{AABB,String})
 
 	model = getmodel(bbin)
 	normal = [plane.a,plane.b,plane.c]

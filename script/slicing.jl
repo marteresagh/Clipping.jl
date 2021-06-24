@@ -1,7 +1,7 @@
 println("loading packages... ")
 
 using ArgParse
-using OrthographicProjection
+using Clipping
 
 println("packages OK")
 
@@ -57,10 +57,7 @@ end
 function main()
 	args = parse_commandline()
 
-	OrthographicProjection.flushprintln("== params ==")
-	for (arg,val) in args
-		OrthographicProjection.flushprintln("$arg  =>  $val")
-	end
+
 
 	txtpotreedirs = args["source"]
 	project_name = args["projectname"]
@@ -74,9 +71,14 @@ function main()
 	axis_ = args["axis"]
 	thickness = args["thickness"]
 
+	Clipping.flushprintln("== params ==")
+	for (arg,val) in args
+		Clipping.flushprintln("$arg  =>  $val")
+	end
+
 	b = tryparse.(Float64,split(bbin, " "))
 	if length(b) == 6
-		bbin = OrthographicProjection.AABB(b[4],b[1],b[5],b[2],b[6],b[3])
+		bbin = Clipping.AABB(b[4],b[1],b[5],b[2],b[6],b[3])
 	end
 
 	p1 = tryparse.(Float64,split(p1_, " "))
@@ -97,8 +99,8 @@ function main()
 	prepend!(steps,0.0)
 
 	try
-		proj_folder, plane, model = OrthographicProjection.preprocess(project_name, output_folder, bbin, p1, p2, axis_y, thickness)
-		OrthographicProjection.get_parallel_sections(txtpotreedirs, project_name, proj_folder, bbin, steps, plane, model)
+		proj_folder, plane, model = Clipping.preprocess(project_name, output_folder, bbin, p1, p2, axis_y, thickness)
+		Clipping.get_parallel_sections(txtpotreedirs, project_name, proj_folder, bbin, steps, plane, model)
 	catch y
 
 	end
