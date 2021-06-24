@@ -85,6 +85,9 @@ function main()
 		model = Clipping.getmodel(volume)
 	end
 
+	Clipping.flushprintln(" ")
+
+	
 	Clipping.clip(txtpotreedirs, output, model, epsg)
 end
 
