@@ -15,6 +15,7 @@ function clip(
     params.stream_tmp = open(temp, "w")
 
     for potree in params.potreedirs
+        params.numFilesProcessed = 0
         traversal(potree, params)
     end
 
