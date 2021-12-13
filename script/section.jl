@@ -65,23 +65,23 @@ function main()
 		ucs = FileManager.ucs2matrix(ucs)
 	end
 
-	Clipping.flushprintln("== params ==")
-	Clipping.flushprintln(" Sources => $txtpotreedirs ")
-    Clipping.flushprintln(" Bounding Box => $bbin ")
-	Clipping.flushprintln(" Output => $output ")
-	Clipping.flushprintln(" Point of View => $PO ")
+	println("== params ==")
+	println(" Sources => $txtpotreedirs ")
+    println(" Bounding Box => $bbin ")
+	println(" Output => $output ")
+	println(" Point of View => $PO ")
 	if !isnothing(altitude)
-		Clipping.flushprintln(" Altitude => $altitude ")
-		Clipping.flushprintln(" Thickness => $thickness ")
+		println(" Altitude => $altitude ")
+		println(" Thickness => $thickness ")
 	end
 	if !isnothing(ucs)
-		Clipping.flushprintln(" User coordinates system => $ucs ")
+		println(" User coordinates system => $ucs ")
 	end
 	if !isnothing(epsg)
-		Clipping.flushprintln(" EPSG => $epsg ")
+		println(" EPSG => $epsg ")
 	end
-	Clipping.flushprintln(" ")
-
+	println(" ")
+	flush(stdout)
 	# init
 	coordsystemmatrix = Clipping.PO2matrix(PO,ucs)
 	model = Common.getmodel(bbin)

@@ -91,15 +91,16 @@ function main()
 
     prepend!(steps, 0.0)
 
-    Clipping.flushprintln("== params ==")
-	Clipping.flushprintln(" Sources => $txtpotreedirs ")
-    Clipping.flushprintln(" Bounding Box => $bbin ")
-	Clipping.flushprintln(" Output => $output_folder ")
-	Clipping.flushprintln(" Project name => $project_name ")
-	Clipping.flushprintln(" Steps => $steps ")
-	Clipping.flushprintln(" Plane => p1: $p1, p2: $p2, up: $axis_y  ")
-	Clipping.flushprintln(" Thickness => $thickness ")
-	Clipping.flushprintln(" ")
+    println("== params ==")
+	println(" Sources => $txtpotreedirs ")
+    println(" Bounding Box => $bbin ")
+	println(" Output => $output_folder ")
+	println(" Project name => $project_name ")
+	println(" Steps => $steps ")
+	println(" Plane => p1: $p1, p2: $p2, up: $axis_y  ")
+	println(" Thickness => $thickness ")
+	println(" ")
+	flush(stdout)
 
     proj_folder = FileManager.mkdir_project(output_folder, project_name)
 
@@ -117,8 +118,8 @@ function main()
     n_sections = length(steps)
 
     Threads.@threads for i = 1:n_sections
-        Clipping.flushprintln(" ")
-        Clipping.flushprintln(" ---- Section $i of $(n_sections) ----")
+        println(" ")
+        println(" ---- Section $i of $(n_sections) ----")
         T = Common.apply_matrix(
             Common.t(-Common.inv(plane.matrix)[1:3, 3] * sum(steps[1:i])...),
             V,

@@ -44,9 +44,9 @@ end
 function main()
 	args = parse_commandline()
 
-	OrthographicProjection.flushprintln("== params ==")
+	println("== params ==")
 	for (arg,val) in args
-		OrthographicProjection.flushprintln("$arg  =>  $val")
+		println("$arg  =>  $val")
 	end
 
 	txtpotreedirs = args["source"]
@@ -61,7 +61,7 @@ function main()
 	if length(b) == 6
 		bbin = OrthographicProjection.AABB(b[4],b[1],b[5],b[2],b[6],b[3])
 	end
-	
+
 	axis_y = tryparse.(Float64,split(axis_, " "))
 	@assert length(axis_y) == 3 "a 3D axis needed"
 

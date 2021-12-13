@@ -62,7 +62,7 @@ function preprocess(
             )
             push!(models, model)
         catch y
-            # flushprintln("ERROR: Plane not consistent")
+            # println("ERROR: Plane not consistent")
             # io = open(joinpath(proj_folder,"process.prob"),"w")
             # close(io)
         end
@@ -112,8 +112,8 @@ function get_parallel_sections(
     planes = Common.LAR[]
     n_sections = length(indices)
     Threads.@threads for i = 1:n_sections
-        flushprintln(" ")
-        flushprintln(" ---- Section $i of $n_sections ----")
+        println(" ")
+        println(" ---- Section $i of $n_sections ----")
         T = Common.apply_matrix(
             Common.t(Common.inv(plane.matrix)[1:3, 3] * indices[i] * step...),
             V,
@@ -143,8 +143,8 @@ function get_parallel_sections(
     n_sections = length(steps)
 
     Threads.@threads for i = 1:n_sections
-        flushprintln(" ")
-        flushprintln(" ---- Section $i of $(n_sections) ----")
+        println(" ")
+        println(" ---- Section $i of $(n_sections) ----")
         T = Common.apply_matrix(
             Common.t(-Common.inv(plane.matrix)[1:3, 3] * sum(steps[1:i])...),
             V,
@@ -214,8 +214,8 @@ function extract_models(
 
     n_models = length(models)
     Threads.@threads for i = 1:n_models
-        flushprintln(" ")
-        flushprintln(" ---- Section $i of $n_models ----")
+        println(" ")
+        println(" ---- Section $i of $n_models ----")
         output = joinpath(proj_folder, project_name) * "_section_$(i-1).las"
         segment(txtpotreedirs, output, models[i]; temp_name = "temp_$i.las") # slicing point cloud
     end

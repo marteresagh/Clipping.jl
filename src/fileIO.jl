@@ -20,13 +20,13 @@ function savepointcloud(
 	temp::String
 	)
 
-	flushprintln("Point cloud: saving ...")
+	println("Point cloud: saving ...")
 
 	# update header metadata
 	params.mainHeader.records_count = params.numPointsProcessed # update number of points in header
 
 	#update header bounding box
-	flushprintln("Point cloud: update bbox ...")
+	println("Point cloud: update bbox ...")
 	params.mainHeader.x_min = params.tightBB.x_min
 	params.mainHeader.y_min = params.tightBB.y_min
 	params.mainHeader.z_min = params.tightBB.z_min
@@ -49,13 +49,16 @@ function savepointcloud(
 				for i = 1:params.mainHeader.records_count
 					p = read(s, pointtype)
 					write(t,p)
+					if i%10000 == 0
+						flush(t)
+					end
 				end
 			end
 		end
 	end
 
 	rm(temp) # remove temp
-	flushprintln("Point cloud: done ...")
+	println("Point cloud: done ...")
 end
 
 

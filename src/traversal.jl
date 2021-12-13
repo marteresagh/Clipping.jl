@@ -1,7 +1,7 @@
 function traversal(potree::String, params::ParametersClipping)
-	flushprintln("= ")
-	flushprintln("= PROJECT: $potree")
-	flushprintln("= ")
+	println("= ")
+	println("= PROJECT: $potree")
+	println("= ")
 
 	metadata = CloudMetadata(potree) # metadata of current potree project
 	trie = potree2trie(potree)
@@ -14,11 +14,11 @@ function traversal(potree::String, params::ParametersClipping)
 	intersection = Common.modelsdetection(params.model, metadata.tightBoundingBox)
 
 	if intersection == 2
-		flushprintln("FULL model")
+		println("FULL model")
 		for k in keys(trie)
 			params.numFilesProcessed = params.numFilesProcessed + 1
 			if params.numFilesProcessed%100==0
-				flushprintln(params.numFilesProcessed," files processed of ",params.numNodes)
+				println(params.numFilesProcessed," files processed of ",params.numNodes)
 			end
 
 			file = trie[k]
@@ -26,14 +26,14 @@ function traversal(potree::String, params::ParametersClipping)
 
 		end
 	elseif intersection == 1
-		flushprintln("DFS")
+		println("DFS")
 		dfs(trie,params)
 
 		if params.numNodes-params.numFilesProcessed > 0
-			flushprintln("$(params.numNodes-params.numFilesProcessed) file of $(params.numNodes) not processed - out of region of interest")
+			println("$(params.numNodes-params.numFilesProcessed) file of $(params.numNodes) not processed - out of region of interest")
 		end
 	elseif intersection == 0
-		flushprintln("OUT OF REGION OF INTEREST")
+		println("OUT OF REGION OF INTEREST")
 	end
 
 end
@@ -55,7 +55,7 @@ function dfs(trie::DataStructures.Trie{String}, params::ParametersClipping)# due
 		# alcuni punti ricadono nel modello altri no
 		params.numFilesProcessed = params.numFilesProcessed + 1
 		if params.numFilesProcessed%100==0
-			flushprintln(params.numFilesProcessed, " files processed of ", params.numNodes)
+			println(params.numFilesProcessed, " files processed of ", params.numNodes)
 		end
 
 		addWithControl(params)(file) # update with check
@@ -67,7 +67,7 @@ function dfs(trie::DataStructures.Trie{String}, params::ParametersClipping)# due
 		for k in keys(trie)
 			params.numFilesProcessed = params.numFilesProcessed + 1
 			if params.numFilesProcessed%100==0
-				flushprintln(params.numFilesProcessed, " files processed of ", params.numNodes)
+				println(params.numFilesProcessed, " files processed of ", params.numNodes)
 			end
 			file = trie[k]
 			addWithoutControl(params)(file) # update without check
