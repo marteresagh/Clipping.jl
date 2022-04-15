@@ -43,7 +43,8 @@ mutable struct ParametersClipping
 	stream_tmp::Union{Nothing,IOStream}
 
 	# parametri che passa l'utente
-	function ParametersClipping(txtpotreedirs::String,
+	function ParametersClipping(
+		txtpotreedirs::String,
 		outputfile::String,
 		model::Common.LAR,
 		epsg::Union{Nothing,Integer})
@@ -74,6 +75,7 @@ mutable struct ParametersClipping
 	end
 
 end
+
 
 
 """

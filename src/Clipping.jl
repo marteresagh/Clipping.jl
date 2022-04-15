@@ -13,5 +13,9 @@ module Clipping
 	include("addpoint.jl")
  	# include("slices/main.jl")
 
+	include("new/struct.jl")
+	include("new/traversal.jl")
+	include("new/clip.jl")
+
 	export Common, FileManager
 end # module
