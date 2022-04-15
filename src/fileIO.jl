@@ -15,53 +15,44 @@ end
 """
 Save point cloud extracted file .las.
 """
-function savepointcloud(
-	params::ParametersClipping,
-	temp::String
-	)
+function savepointcloud(params::ClippingArguments, temp::String)
 
-	println("Point cloud: saving ...")
+    println("Point cloud: saving ...")
 
-	# update header metadata
-	params.mainHeader.records_count = params.numPointsProcessed # update number of points in header
+    # update header metadata
+    params.mainHeader.records_count = params.numPointsProcessed # update number of points in header
 
-	#update header bounding box
-	println("Point cloud: update bbox ...")
-	params.mainHeader.x_min = params.tightBB.x_min
-	params.mainHeader.y_min = params.tightBB.y_min
-	params.mainHeader.z_min = params.tightBB.z_min
-	params.mainHeader.x_max = params.tightBB.x_max
-	params.mainHeader.y_max = params.tightBB.y_max
-	params.mainHeader.z_max = params.tightBB.z_max
+    #update header bounding box
+    println("Point cloud: update bbox ...")
+    params.mainHeader.x_min = params.tightBB.x_min
+    params.mainHeader.y_min = params.tightBB.y_min
+    params.mainHeader.z_min = params.tightBB.z_min
+    params.mainHeader.x_max = params.tightBB.x_max
+    params.mainHeader.y_max = params.tightBB.y_max
+    params.mainHeader.z_max = params.tightBB.z_max
 
-	# write las file
-	pointtype = LasIO.pointformat(params.mainHeader) # las point format
+    # write las file
+    pointtype = LasIO.pointformat(params.mainHeader) # las point format
 
+    # in temp : list of las point records
+    open(temp, "r") do s
+        # write las
+        open(joinpath(params.destinationDir, params.filename), "w") do t
+            write(t, LasIO.magic(LasIO.format"LAS"))
+            write(t, params.mainHeader)
 
-	if params.mainHeader.records_count != 0 # if n == 0 nothing to save
-		# in temp : list of las point records
-		open(temp, "r") do s
-			# write las
-			open(params.outputfile,"w") do t
-				write(t, LasIO.magic(LasIO.format"LAS"))
-				write(t,params.mainHeader)
+            for i = 1:params.mainHeader.records_count
+                p = read(s, pointtype)
+                write(t, p)
+                if i % 10000 == 0
+                    flush(t)
+                end
+            end
+        end
+    end
 
-				for i = 1:params.mainHeader.records_count
-					p = read(s, pointtype)
-					write(t,p)
-					if i%10000 == 0
-						flush(t)
-					end
-				end
-			end
-		end
-	end
-
-	rm(temp) # remove temp
-	println("Point cloud: done ...")
+    println("Point cloud: done ...")
 end
-
-
 
 function newPointRecord(point::Point, type::LasIO.DataType, header::LasIO.LasHeader)
 

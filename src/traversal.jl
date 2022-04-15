@@ -1,4 +1,4 @@
-function traversal(potree::String, params::ParametersClipping)
+function traversal(potree::String, params::ClippingArguments)
 	println("= ")
 	println("= PROJECT: $potree")
 	println("= ")
@@ -16,9 +16,9 @@ function traversal(potree::String, params::ParametersClipping)
 	if intersection == 2
 		println("FULL model")
 		for k in keys(trie)
-			params.numFilesProcessed = params.numFilesProcessed + 1
-			if params.numFilesProcessed%100==0
-				println(params.numFilesProcessed," files processed of ",params.numNodes)
+			params.currentNumFilesProcessed += 1
+			if params.currentNumFilesProcessed%100==0
+				println(params.currentNumFilesProcessed," files processed of ",params.numNodes)
 			end
 
 			file = trie[k]
@@ -29,8 +29,8 @@ function traversal(potree::String, params::ParametersClipping)
 		println("DFS")
 		dfs(trie,params)
 
-		if params.numNodes-params.numFilesProcessed > 0
-			println("$(params.numNodes-params.numFilesProcessed) file of $(params.numNodes) not processed - out of region of interest")
+		if params.numNodes-params.currentNumFilesProcessed > 0
+			println("$(params.numNodes-params.currentNumFilesProcessed) file of $(params.numNodes) not processed - out of region of interest")
 		end
 	elseif intersection == 0
 		println("OUT OF REGION OF INTEREST")
@@ -44,7 +44,7 @@ end
 	dfs(trie::DataStructures.Trie{String}, model::Common.LAR)# due callback: 1 con controllo e 1 senza controllo
 Depth search first.
 """
-function dfs(trie::DataStructures.Trie{String}, params::ParametersClipping)# due callback: 1 con controllo e 1 senza controllo
+function dfs(trie::DataStructures.Trie{String}, params::ClippingArguments)# due callback: 1 con controllo e 1 senza controllo
 
 	file = trie.value # path to node file
 	nodebb = FileManager.las2aabb(file) # aabb of current octree
@@ -53,9 +53,9 @@ function dfs(trie::DataStructures.Trie{String}, params::ParametersClipping)# due
 	if inter == 1
 		# intersecato ma non contenuto
 		# alcuni punti ricadono nel modello altri no
-		params.numFilesProcessed = params.numFilesProcessed + 1
-		if params.numFilesProcessed%100==0
-			println(params.numFilesProcessed, " files processed of ", params.numNodes)
+		params.currentNumFilesProcessed += 1
+		if params.currentNumFilesProcessed%100==0
+			println(params.currentNumFilesProcessed, " files processed of ", params.numNodes)
 		end
 
 		addWithControl(params)(file) # update with check
@@ -65,9 +65,9 @@ function dfs(trie::DataStructures.Trie{String}, params::ParametersClipping)# due
 	elseif inter == 2
 		# contenuto: tutti i punti del albero sono nel modello
 		for k in keys(trie)
-			params.numFilesProcessed = params.numFilesProcessed + 1
-			if params.numFilesProcessed%100==0
-				println(params.numFilesProcessed, " files processed of ", params.numNodes)
+			params.currentNumFilesProcessed += 1
+			if params.currentNumFilesProcessed%100==0
+				println(params.currentNumFilesProcessed, " files processed of ", params.numNodes)
 			end
 			file = trie[k]
 			addWithoutControl(params)(file) # update without check

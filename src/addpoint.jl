@@ -1,9 +1,8 @@
 
-function addWithControl(params::ParametersClipping)
+function addWithControl(params::ClippingArguments)
     function addWithControl0(file::String)
         header, laspoints = FileManager.read_LAS_LAZ(file) # read file
         for laspoint in laspoints # read each point
-            #point = FileManager.xyz(laspoint, header)
             point = Point(laspoint, header)
             if Common.inmodel(params.model)(point.position) # if point in model
                 add_point(params, point)
@@ -14,7 +13,7 @@ function addWithControl(params::ParametersClipping)
 end
 
 
-function addWithoutControl(params::ParametersClipping)
+function addWithoutControl(params::ClippingArguments)
     function addWithoutControl0(file::String)
         header, laspoints = FileManager.read_LAS_LAZ(file) # read file
         for laspoint in laspoints # read each point
@@ -26,7 +25,7 @@ function addWithoutControl(params::ParametersClipping)
 end
 
 function add_point(
-    params::ParametersClipping,
+    params::ClippingArguments,
     point::Point
 )
     Common.update_boundingbox!(params.tightBB,point.position)

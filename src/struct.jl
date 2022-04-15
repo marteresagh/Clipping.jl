@@ -1,84 +1,4 @@
 """
-ParametersClipping
-
-# Constructors
-```jldoctest
-ParametersExtraction(txtpotreedirs::String,
-	outputfile::String,
-	model::LAR;
-	epsg = nothing::Union{Nothing,Integer}
-	)
-```
-Input description:
-- txtpotreedirs: path to Potree project or a text file containing a list of Potree projects
-- outputfile: output LAS filename
-- model: cuboidal LAR model
-- epsg: projection code
-
-
-# Fields
-```jldoctest
-outputfile::String
-potreedirs::Array{String,1}
-model::LAR
-mainHeader::LasIO.LasHeader
-```
-
-Fields description:
- - outputfile: Output filename for point cloud
- - potreedirs: Potree projects
- - model: Cuboidal LAR model
- - mainHeader: header of point cloud LAS file
-
-"""
-mutable struct ParametersClipping
-	outputfile::String
-	potreedirs::Array{String,1}
-	model::Common.LAR
-	tightBB::AABB
-	numPointsProcessed::Int64
-	numNodes::Int64
-	numFilesProcessed::Int64
-	mainHeader::LasIO.LasHeader
-	stream_tmp::Union{Nothing,IOStream}
-
-	# parametri che passa l'utente
-	function ParametersClipping(
-		txtpotreedirs::String,
-		outputfile::String,
-		model::Common.LAR,
-		epsg::Union{Nothing,Integer})
-
-		numPointsProcessed = 0
-		numNodes = 0
-		numFilesProcessed = 0
-		potreedirs = get_potree_dirs(txtpotreedirs)
-
-		aabb = AABB(model[1])
-		mainHeader = FileManager.newHeader(aabb,"CLIPPING",FileManager.SIZE_DATARECORD)
-
-		if !isnothing(epsg)
-			FileManager.LasIO.epsg_code!(mainHeader, epsg)
-		end
-
-		stream_tmp = nothing
-
-		return new(outputfile,
-					potreedirs,
-					model,
-					AABB(-Inf, Inf,-Inf, Inf,-Inf, Inf),
-					numPointsProcessed,
-					numNodes,
-					numFilesProcessed,
-					mainHeader,
-					stream_tmp)
-	end
-
-end
-
-
-
-"""
 	Point
 
 Point information.
@@ -140,4 +60,53 @@ end
 function Base.show(io::IO, point::Point)
     println(io, "position: $(point.position)")
 	println(io, "color: $(point.color)")
+end
+
+
+
+mutable struct ClippingArguments
+	destinationDir::String
+	filename::String
+	potreedirs::Vector{String}
+	model::Common.LAR
+	tightBB::AABB
+	numPointsProcessed::Int64
+	numNodes::Int64
+	currentNumFilesProcessed::Int64
+	mainHeader::LasIO.LasHeader
+	stream_tmp::Union{Nothing,IOStream}
+
+	# parametri che passa l'utente
+	function ClippingArguments(
+		destinationDir::String,
+		potrees::Vector{String},
+		filename::String,
+		model::Common.LAR,
+		epsg::Union{Nothing,Integer})
+
+		numPointsProcessed = 0
+		numNodes = 0
+		numFilesProcessed = 0
+
+		aabb = AABB(model[1])
+		mainHeader = FileManager.newHeader(aabb,"CLIPPING",FileManager.SIZE_DATARECORD)
+
+		if !isnothing(epsg)
+			FileManager.LasIO.epsg_code!(mainHeader, epsg)
+		end
+
+		stream_tmp = nothing
+
+		return new(destinationDir,
+					filename,
+					potrees,
+					model,
+					AABB(-Inf, Inf,-Inf, Inf,-Inf, Inf),
+					numPointsProcessed,
+					numNodes,
+					numFilesProcessed,
+					mainHeader,
+					stream_tmp)
+	end
+
 end
